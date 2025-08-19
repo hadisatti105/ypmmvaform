@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YPM Leads Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <h2 class="mb-4">YPM Leads - Call Transfer Form</h2>
+    <form id="leadForm">
+      <!-- Caller Information -->
+      <div class="mb-3">
+        <label class="form-label">Caller ID (Phone)</label>
+        <input type="text" name="caller_id" class="form-control" placeholder="+17194451111" required>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">First Name</label>
+          <input type="text" name="first_name" class="form-control" required>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Last Name</label>
+          <input type="text" name="last_name" class="form-control" required>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" required>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Zip</label>
+          <input type="text" name="zip" class="form-control" required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label">State</label>
+          <select name="state" class="form-select" required>
+            <option value="">Select...</option>
+            <option value="FL">Florida</option>
+            <option value="CA">California</option>
+            <option value="NY">New York</option>
+            <option value="TX">Texas</option>
+            <!-- You can add all states here -->
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Trusted Form URL</label>
+          <input type="text" name="trusted_form_cert_url" class="form-control" placeholder="Example">
+        </div>
+      </div>
+
+      <!-- Accident Details -->
+      <hr>
+      <h5>Accident Details (Optional)</h5>
+      <div class="mb-3">
+        <label class="form-label">Accident State</label>
+        <input type="text" name="accident_state" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Date Injured</label>
+        <input type="date" name="date_injured" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Hospitalized/Treated?</label>
+        <input type="text" name="hospitalized_or_treated" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Person at Fault</label>
+        <input type="text" name="person_at_fault" class="form-control">
+      </div>
+
+      <!-- Representation -->
+      <hr>
+      <h5>Case Representation</h5>
+      <div class="mb-3">
+        <label class="form-label">Currently Represented?</label>
+        <select name="currently_represented" class="form-select" required>
+          <option value="">Select...</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Comments</label>
+        <textarea name="comments" class="form-control" placeholder="Enter case notes..." required></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-primary">Submit Lead</button>
+    </form>
+
+    <div class="mt-3" id="response"></div>
+  </div>
+
+  <script>
+    document.getElementById("leadForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const formData = Object.fromEntries(new FormData(e.target).entries());
+
+      const responseDiv = document.getElementById("response");
+      responseDiv.innerHTML = "Submitting...";
+
+      try {
+        const res = await fetch("/submit-lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData)
+        });
+        const data = await res.json();
+        responseDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      } catch (err) {
+        responseDiv.innerHTML = `<span class="text-danger">Error: ${err.message}</span>`;
+      }
+    });
+  </script>
+</body>
+</html>
